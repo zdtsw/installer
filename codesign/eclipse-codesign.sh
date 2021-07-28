@@ -23,6 +23,8 @@ case $OPERATING_SYSTEM in
     mac) SEARCH_PATTERN=OpenJDK*-j*.pkg ;;
 esac
 
+mv $WORKSPACE/wix/ReleaseDir/${SEARCH_PATTERN} $WORKSPACE/workspace/target/${SEARCH_PATTERN}
+
 for f in $WORKSPACE/workspace/target/${SEARCH_PATTERN};
 do 
     # Detect if JRE or JDK
