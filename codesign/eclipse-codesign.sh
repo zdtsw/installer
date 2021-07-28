@@ -23,7 +23,8 @@ case $OPERATING_SYSTEM in
     mac) SEARCH_PATTERN=OpenJDK*-j*.pkg ;;
 esac
 
-mv $WORKSPACE/wix/ReleaseDir/${SEARCH_PATTERN} $WORKSPACE/workspace/target/${SEARCH_PATTERN}
+mkdir -p WORKSPACE/workspace/target/
+mv $WORKSPACE/wix/ReleaseDir/${SEARCH_PATTERN} $WORKSPACE/workspace/target/
 
 for f in $WORKSPACE/workspace/target/${SEARCH_PATTERN};
 do 
