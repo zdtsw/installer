@@ -165,18 +165,28 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 
 ### DEB
 Supported JDK version 8,11,17,18 
-Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk11+)  
+Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk8+)
+| Distr    | Test enabled platforms | Note |
+| ---------|:----------------------:|:----:|
+| stretch  | x86_64     |                |
+| buster   | x86_64     |                |
+| bullseye | x86_64     |                |
+| bionic   | x86_64     |                |
+| focal    | x86_64     |                |
+| groovy   | x86_64     |                |
+| hirsute  | x86_64     |                |
+| jammy    | x86_64     |                |
 
 ### RPM (RedHat and Suse)
 Supported JDK version 8,11,17,18
-Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk11+)
+Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk8+)
 SRPM also available.
 
 | Distr            | Test enabled platforms | Note |
 | ---------------- |:----------------------:|:----:|
 | amazonlinux/2    | x86_64     |                |
 | centos/7         | x86_64     |                |
-| centos/8 (switch to rocky/8)  | x86_64     ||   |
+| centos/8 (switch to rocky/8)  | x86_64     |   |
 | rpm/fedora/34    | x86_64     |                |
 | rpm/fedora/35    | x86_64     |                |
 | rpm/fedora/36    | x86_64     |                |
