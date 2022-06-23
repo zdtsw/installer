@@ -11,6 +11,7 @@ cp -R /home/builder/build/generated/packaging /home/builder/workspace
 debVersionList="stretch buster bullseye bionic focal groovy hirsute jammy"
 dpkgExtraARG="-us -uc" 
 
+echo "DEBUG: building DEbian arch ${buildArch}"
 if [[ "${buildArch}" == "all" ]]; then
 	dpkgExtraARG="${dpkgExtraARG} -b" # equal to --build=any,all
 else
