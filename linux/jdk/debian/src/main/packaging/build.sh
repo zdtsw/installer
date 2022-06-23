@@ -9,13 +9,13 @@ cp -R /home/builder/build/generated/packaging /home/builder/workspace
 
 # $ and $ARCH are env variables passing in from "docker run"
 debVersionList="stretch buster bullseye bionic focal groovy hirsute jammy"
-dpkgExtraARG="-us -uc" 
+dpkgExtraARG="-us -uc" # ignore building with a gpg key
 
 echo "DEBUG: building DEbian arch ${buildArch}"
 if [[ "${buildArch}" == "all" ]]; then
-	dpkgExtraARG="${dpkgExtraARG} -b" # equal to --build=any,all
+	dpkgExtraARG="${dpkgExtraARG} -b" # equal to --build=any,all|--build=binary
 else
-    dpkgExtraARG="${dpkgExtraARG} --build=${buildArch}"
+    dpkgExtraARG="${dpkgExtraARG} --build=any"
 fi
 
 # Build package and set distributions it supports
