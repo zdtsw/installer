@@ -15,7 +15,9 @@ env.NODE_LABEL_DEB = "docker&&linux&&${ARCH}"  // Debian non-x64 + x64
 env.PRODUCT = "temurin"
 
 pipeline {
-    agent none
+    agent {
+        label NODE_LABEL_RPM
+    }
     parameters {
         choice(name: 'VERSION', choices: ['8', '11', '17', '18'], description: 'Build for specific JDK VERSION')
         choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'aarch64', 'ppc64le', 's390x'], description: "Build for specific platform\n s300x not for VERSION 8\n")
@@ -26,11 +28,22 @@ pipeline {
         jdk "jdk-11.0.13+8"
     }
     stages {
-        stage ("Set Build info"){
+        stage ("Prepare Build"){
             steps{
                 script{
                     currentBuild.displayName =  "jdk${VERSION} - ${ARCH} - ${DISTRO}"
                     currentBuild.description = env.BUILD_USER_ID
+                }
+                checkout(
+                    [
+                        $class: 'GitSCM',
+                        branches: [[name: 'feat/459']],
+                        extensions: [[$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]],
+                        userRemoteConfigs: [[url: 'https://github.com/zdtsw/installer']]
+                    ]
+                )
+                dir("linux") {
+                    stash name: "installercode", includes: "**"
                 }
             }
         }
@@ -39,6 +52,7 @@ pipeline {
             parallel{
                 stage('Build Installer for Debian') {
                     when  {
+                        beforeAgent true
                         anyOf {
                             expression{ params.DISTRO == 'all' }  // trigger debian build
                             expression{ params.DISTRO == 'Debian' }
@@ -53,6 +67,7 @@ pipeline {
                                 DISTRO = "Debian"
                                 echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
                                 setup("${DISTRO}", "${ARCH}")
+                                unstash 'installercode'
                                 buildAndTest("${DISTRO}", "${ARCH}")
                                 if (UPLOAD.toBoolean()) {
                                     echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
@@ -64,13 +79,11 @@ pipeline {
                 }
                 stage('Build Installer for Redhat') {
                     when  {
+                        beforeAgent true
                         anyOf {
                             expression{ params.DISTRO == 'all' }  // trigger debian build
                             expression{ params.DISTRO == 'RedHat' }
                         }
-                    }
-                    agent {
-                        label env.NODE_LABEL_RPM
                     }
                     steps{
                         dir('linuxRedHat') {
@@ -78,6 +91,7 @@ pipeline {
                                 DISTRO = "RedHat"
                                 echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
                                 setup("${DISTRO}", "${ARCH}")
+                                unstash 'installercode'
                                 buildAndTest("${DISTRO}", "${ARCH}")
                                 if (UPLOAD.toBoolean()) {
                                     echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
@@ -89,13 +103,11 @@ pipeline {
                 }
                 stage('Build Installer for Suse') {
                     when  {
+                        beforeAgent true // do condition when before allocate to agent
                         anyOf {
                             expression{ params.DISTRO == 'all' }  // trigger debian build
                             expression{ params.DISTRO == 'Suse' }
                         }
-                    }
-                    agent {
-                        label env.NODE_LABEL_RPM
                     }
                     steps{
                         dir('linuxSuse') {
@@ -103,6 +115,7 @@ pipeline {
                                 DISTRO = "Suse"
                                 echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
                                 setup("${DISTRO}", "${ARCH}")
+                                unstash 'installercode'
                                 buildAndTest("${DISTRO}", "${ARCH}")
                                 if (UPLOAD.toBoolean()) {
                                     echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
@@ -126,7 +139,6 @@ def setup(DISTRO, buildArch) {
     env.DOCKER_BUILDKIT = buildArch == "s390x" ? '0' : '1'
     env.COMPOSE_DOCKER_CLI_BUILD=1
     env._JAVA_OPTIONS =  (buildArch == "armv7hl" && DISTRO == "Debian")? "" : "-Xmx4g"
-    checkout scm
 }
 
 def buildAndTest(DISTRO, buildArch) {
@@ -134,7 +146,7 @@ def buildAndTest(DISTRO, buildArch) {
     if (DISTRO != "Debian") {
         // Install Adoptium GPG key for RPM signing
         withCredentials([file(credentialsId: 'adoptium-artifactory-gpg-key', variable: 'GPG_KEY')]) {
-            sh("./linux/gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}")
+            sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}")
         }
     } else {
         def gBuildTask = (buildArch == 'x86_64') ? "packageJdk${DISTRO} checkJdk${DISTRO}" : "packageJdk${DISTRO}"
