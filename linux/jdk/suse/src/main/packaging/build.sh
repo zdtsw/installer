@@ -4,13 +4,14 @@ set -euxo pipefail
 # Ensure necessary directories for rpmbuild operation are present.
 rpmdev-setuptree
 
+echo "DEBUG: building Suse arch ${buildArch} and version ${buildVersion}"
 # Build specified target or build all (not s390x on jdk8)
-if ${buildArch} != "all"; then
+if [ "${buildArch}" != "all" ]; then
 	targets=${buildArch}
-elif ${buildVersion} != "8"; then
-  	targets="x86_64 ppc64le aarch64 armv7hl s390x"
+elif [ ${buildVersion} != "8" ]; then
+	targets="x86_64 ppc64le aarch64 armv7hl s390x"
 else
-	targets="x86_64 ppc64le aarch64 armv7hl"	
+	targets="x86_64 ppc64le aarch64 armv7hl"
 fi
 
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do
