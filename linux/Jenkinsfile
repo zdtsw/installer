@@ -6,21 +6,20 @@ x86_64      x86_64      amd64
 armv7hl     armv7hl     armhf       arm32
 aarch64     aarch64     arm64       arm64
 ppc64le     ppc64le     ppc64le
-source      src         -           only for RPM
+source      src         -           only for SRPM and no need specify as option or target
 s390x       s390x       s390x       only for jdk8+
 */
 
-env.NODE_LABEL = "dockerBuild&&linux&&x64"
+env.NODE_LABEL_RPM = "dockerBuild&&linux&&x64" // RedHat + Suse
+env.NODE_LABEL_DEB = "docker&&linux&&${ARCH}"  // Debian non-x64 + x64
 env.PRODUCT = "temurin"
 
 pipeline {
-    agent {
-        label env.NODE_LABEL
-    }
+    agent none
     parameters {
         choice(name: 'VERSION', choices: ['8', '11', '17', '18'], description: 'Build for specific JDK VERSION')
-        choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'aarch64', 'ppc64le', 's390x', 'source'], description: "Build for specific platform\n s300x not for VERSION 8\n source not for DISTRO: Debian")
-        choice(name: 'DISTRO', choices: ['all', 'Debian', 'RPM'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
+        choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'aarch64', 'ppc64le', 's390x'], description: "Build for specific platform\n s300x not for VERSION 8\n")
+        choice(name: 'DISTRO', choices: ['all', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
         booleanParam(name: 'UPLOAD', defaultValue: false, description: 'Tick this box to upload the deb/rpm files to Artifactory')
     }
     tools {
@@ -45,6 +44,9 @@ pipeline {
                             expression{ params.DISTRO == 'Debian' }
                         }
                     }
+                    agent {
+                        label env.NODE_LABEL_DEB
+                    }
                     steps{
                         dir('linuxDebian') {
                             script {
@@ -62,7 +64,13 @@ pipeline {
                 }
                 stage('Build Installer for Redhat') {
                     when  {
-                        not {  expression{ params.DISTRO == 'Debian' } }
+                        anyOf {
+                            expression{ params.DISTRO == 'all' }  // trigger debian build
+                            expression{ params.DISTRO == 'RedHat' }
+                        }
+                    }
+                    agent {
+                        label env.NODE_LABEL_RPM
                     }
                     steps{
                         dir('linuxRedHat') {
@@ -81,7 +89,13 @@ pipeline {
                 }
                 stage('Build Installer for Suse') {
                     when  {
-                        not {  expression{ params.DISTRO == 'Debian' } }
+                        anyOf {
+                            expression{ params.DISTRO == 'all' }  // trigger debian build
+                            expression{ params.DISTRO == 'Suse' }
+                        }
+                    }
+                    agent {
+                        label env.NODE_LABEL_RPM
                     }
                     steps{
                         dir('linuxSuse') {
@@ -120,7 +134,7 @@ def buildAndTest(DISTRO, buildArch) {
     if (DISTRO != "Debian") {
         // Install Adoptium GPG key for RPM signing
         withCredentials([file(credentialsId: 'adoptium-artifactory-gpg-key', variable: 'GPG_KEY')]) {
-            sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}")
+            sh("./linux/gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}")
         }
     } else {
         def gBuildTask = (buildArch == 'x86_64') ? "packageJdk${DISTRO} checkJdk${DISTRO}" : "packageJdk${DISTRO}"
@@ -139,7 +153,7 @@ def buildAndTest(DISTRO, buildArch) {
 def uploadArtifacts(DISTRO, buildArch) {
     if (DISTRO == "Debian") {
         uploadDebArtifacts(buildArch)
-    } else {  // DISTRO == RPM(RedHat&&Suse)
+    } else {  // DISTRO == RPM(RedHat||Suse)
         uploadRPMArtifacts(DISTRO)
     }
 }
@@ -184,16 +198,17 @@ def uploadRPMArtifacts(DISTRO) {
     def distro_Package = [
         'redhat' : [
             'rpm/centos/7',
-            'rpm/centos/8',
             'rpm/rocky/8',
+            'rpm/rhel/6',
             'rpm/rhel/7',
             'rpm/rhel/8',
             'rpm/fedora/34',
             'rpm/fedora/35',
             'rpm/fedora/36',
+            'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',
             'rpm/amazonlinux/2',
-            'rpm/oraclelinux/7'
+
         ],
         'suse'   : [
             'rpm/opensuse/15.1',
@@ -210,7 +225,7 @@ def uploadRPMArtifacts(DISTRO) {
         "armv7hl": "armv7hl",
         "aarch64": "aarch64",
         "ppc64le": "ppc64le",
-        "source" : "src",
+        "source" : "src",  // here we need src in the list to be able to upload
         "s390x"  : "s390x"
     ]
 
