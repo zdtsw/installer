@@ -23,6 +23,8 @@ pipeline {
         choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'aarch64', 'ppc64le', 's390x', 'all'], description: "Build for specific platform\n s300x not for VERSION 8\n")
         choice(name: 'DISTRO', choices: ['all', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
         booleanParam(name: 'UPLOAD', defaultValue: false, description: 'Tick this box to upload the deb/rpm files to Artifactory')
+        string(name: 'gitrepo', defaultValue: 'https://github.com/adoptium/installer', description: 'Do not modify unless want to build from a specific gitrepo')
+        string(name: 'gitbranch', defaultValue: 'master', description: 'Do not change unless want to build on a specific branch from above gitrepo')
     }
     tools {
         jdk "jdk-11.0.13+8"
@@ -37,9 +39,9 @@ pipeline {
                 checkout(
                     [
                         $class: 'GitSCM',
-                        branches: [[name: 'feat/459']],
+                        branches: [[name: "$gitbranch"]],
                         extensions: [[$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]],
-                        userRemoteConfigs: [[url: 'https://github.com/zdtsw/installer']]
+                        userRemoteConfigs: [[url: "$gitrepo"]]
                     ]
                 )
                 dir("linux") {
@@ -146,7 +148,7 @@ def buildAndTest(DISTRO, buildArch) {
     if (DISTRO != "Debian") {
         // Install Adoptium GPG key for RPM signing
         withCredentials([file(credentialsId: 'adoptium-artifactory-gpg-key', variable: 'GPG_KEY')]) {
-            sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}")
+            sh('./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}')
         }
     } else {
         def gBuildTask = (buildArch == 'x86_64') ? "packageJdk${DISTRO} checkJdk${DISTRO}" : "packageJdk${DISTRO}"
