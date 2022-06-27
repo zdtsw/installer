@@ -162,7 +162,7 @@ def buildAndTest(DISTRO, buildArch) {
         ]
         sh("./gradlew ${gBuildTask} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${debArchList[buildArch]}")
     }
-    archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
+    archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*' onlyIfSuccessful:false
 }
 
 def uploadArtifacts(DISTRO, buildArch) {
