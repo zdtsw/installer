@@ -35,6 +35,7 @@ pipeline {
                 script{
                     currentBuild.displayName =  "jdk${VERSION} - ${ARCH} - ${DISTRO}"
                     currentBuild.description = env.BUILD_USER_ID
+                    sh("docker --version")
                 }
                 checkout(
                     [
