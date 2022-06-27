@@ -34,7 +34,9 @@ final class RpmFiles {
 	}
 
 	static Path hostRpmPath() {
-		return findBuildOutputOnHost(System.getenv("PACKAGE") + "*.x86_64.rpm");
+		// convert filter when build with ARCH == all, only test on x86_64
+		String rpmFilter = System.getenv("buildArch") == "all" ? System.getenv("PACKAGE") + "*.x86_64.rpm" : System.getenv("PACKAGE") + "*." + System.getenv("buildArch") + ".rpm";
+		return findBuildOutputOnHost(rpmFilter);
 	}
 
 	private static Path findBuildOutputOnHost(String pattern) {

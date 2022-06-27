@@ -112,8 +112,10 @@ task checkJdkRedHat(type: Test) {
 
 	def product = getProduct()
 	def productVersion = getProductVersion()
+	def gpgKey = getGPGKey()
 
 	environment "PACKAGE", "$product-$productVersion-jdk"
+	environment "GPG", "$gpgKey"
 
 	useJUnitPlatform()
 	testLogging {
