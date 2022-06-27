@@ -45,6 +45,7 @@ class ZypperOperationsTest {
 			ex.printStackTrace();
 		}
 		
+		System.out.println("hostRpm.toFile().getName() is" + hostRpm.toFile().getName());
 		File containerRpm = new File("", hostRpm.toFile().getName());
 
 		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {

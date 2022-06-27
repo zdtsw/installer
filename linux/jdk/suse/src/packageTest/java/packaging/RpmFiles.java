@@ -43,6 +43,7 @@ final class RpmFiles {
 		Path outputDirectory = Paths.get("build", "ospackage");
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(outputDirectory, pattern)) {
 			for (Path candidateFile : stream) {
+				System.out.println(candidateFile);
 				return candidateFile;
 			}
 		} catch (IOException x) {
