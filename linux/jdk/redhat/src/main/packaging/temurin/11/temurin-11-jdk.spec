@@ -156,9 +156,14 @@ Eclipse Temurin JDK is an OpenJDK-based development environment to create
 applications and components using the programming language Java.
 
 %prep
+echo "DEBUG START: $PWD"
+echo "%{_sourcedir}"
+ls "%{_sourcedir}"
+cat "%{expand:%{SOURCE%{sha_src_num}}}"
 pushd "%{_sourcedir}"
 sha256sum -c "%{expand:%{SOURCE%{sha_src_num}}}"
 popd
+echo "DEBUG DONE: $PWD"
 
 %setup -n jdk-%{upstream_version} -T -b %{src_num}
 
