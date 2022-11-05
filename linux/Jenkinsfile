@@ -144,7 +144,9 @@ def jenkinsStepDeb() {
     if ("${ARCH}" == 'all') {
         debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x']
     }
+    echo "debArchAllList is ${debArchAllList}"
     debArchAllList.each { DebARCH ->
+        echo "DebARCH is ${DebARCH}"
         // special handle: no label x86_64 only x64 for debian agent
         def debLabel = "${DebARCH}&&docker"
         if ("${DebARCH}" == 'x86_64') {
