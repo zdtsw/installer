@@ -30,10 +30,11 @@ pipeline {
         string(name: 'gitbranch', defaultValue: 'master', description: 'Do not change unless want to build on a specific branch from above gitrepo')
         booleanParam(name: 'enableDebug', defaultValue: false, description: 'Tick to enable --stacktrace for gradle build')
     }
-    tools {
+  /*  tools {
         // this is set in the jenkins global tool
         jdk 'jdk-11.0.13+8'
     }
+    */
     stages {
         stage('Prepare Build') {
             steps {
