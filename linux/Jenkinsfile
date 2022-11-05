@@ -140,7 +140,7 @@ def jenkinsStepDeb() {
     def debArchAllList = "${ARCH}"
     // when ARCH = all, rewrite list
     if ("${ARCH}" == 'all') {
-        debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x']
+        debArchAllList = ['aarch64', 'ppc64le']
     }
     debArchAllList.each { DebARCH ->
         // special handle: no label x86_64 only x64 for debian agent
@@ -199,11 +199,8 @@ def buildAndTest(DISTRO, buildArch) {
         } else {
             def gBuildTask = (buildArch == 'x86_64') ? "packageJdk${DISTRO} checkJdk${DISTRO}" : "packageJdk${DISTRO}"
             def debArchList = [
-                'x86_64' : 'amd64',
-                'armv7l': 'armhf',
                 'aarch64': 'arm64',
-                'ppc64le': 'ppc64el',
-                's390x'  : 's390x'
+                'ppc64le': 'ppc64el'
             ]
             def buildCLI = "./gradlew ${gBuildTask} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${debArchList[buildArch]}"
             buildCLI = params.enableDebug.toBoolean() ? buildCLI + ' --stacktrace' : buildCLI
@@ -249,11 +246,8 @@ def uploadAlpineArtifacts(buildArch) {
 def uploadDebArtifacts(buildArch) {
     // full list of all platforms, up to user to opt out s390x+jdk8
     def debArchList = [
-        'x86_64' : 'amd64',
-        'armv7l': 'armhf',
         'aarch64': 'arm64',
-        'ppc64le': 'ppc64el',
-        's390x'  : 's390x'
+        'ppc64le': 'ppc64el'
     ]
     /*
         Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04
@@ -294,7 +288,7 @@ def uploadRPMArtifacts(DISTRO) {
             'rpm/fedora/36',
             'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',
-            'rpm/amazonlinux/2',
+            'rpm/amazonlinux/2'
 
         ],
         'suse'   : [
