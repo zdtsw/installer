@@ -300,7 +300,7 @@ def uploadRpmArtifacts(DISTRO) {
             'rpm/fedora/36',
             'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',
-            'rpm/amazonlinux/2',
+            'rpm/amazonlinux/2'
 
         ],
         'suse'   : [
