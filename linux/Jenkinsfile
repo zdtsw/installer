@@ -154,7 +154,7 @@ def jenkinsStepDeb() {
             debLabel = 'x64&&dockerBuild'
         }
         // reallocate jenkins agent per element in list
-        node("linux&&${debLabel}") {
+        node("test-sxa-armv7l-ubuntu2004-odroid-2") {
             setup('Debian', "${DebARCH}")
             unstash 'installercode'
             buildAndTest('Debian', "${DebARCH}")
