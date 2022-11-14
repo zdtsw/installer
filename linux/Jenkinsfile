@@ -320,21 +320,21 @@ def uploadRpmArtifacts(DISTRO) {
         rpmArchList.put('source', 'src')
     }
 
+
     packageDirs.each {
         packageDir ->
-            rpmArchList.each {
-                entry -> rtUpload(
-                    serverId: 'adoptium.jfrog.io',
-                    failNoOp: true,
-                    spec: """{
-                        "files": [
-                            {
-                            "pattern": "**/build/ospackage/*.${entry.value}.rpm",
-                            "target": "${packageDir}/${entry.key}/Packages/"
-                            }
-                        ]
-                    }"""
-                )
+            rpmArchList.each { entry ->
+                if (fileExists("**/build/ospackage/*.${entry.value}.rpm")) {
+                   echo " file exist"
+                } else {
+                    echo "${entry.value}.rpm not exist"
+                }
+                sleep 2
+                if (fileExists("**/build/ospackage/*.${entry.value}.rpm")) {
+                   echo " file exist"
+                } else {
+                    echo "${entry.value}.rpm not exist"
+                }
             }
     }
 }
