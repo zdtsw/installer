@@ -321,20 +321,5 @@ def uploadRpmArtifacts(DISTRO) {
     }
 
 
-    packageDirs.each {
-        packageDir ->
-            rpmArchList.each { entry ->
-                if (fileExists("**/build/ospackage/*.${entry.value}.rpm")) {
-                   echo " file exist"
-                } else {
-                    echo "${entry.value}.rpm not exist"
-                }
-                sleep 5 
-                if (fileExists("**/build/ospackage/*.${entry.value}.rpm")) {
-                   echo " file exist"
-                } else {
-                    echo "${entry.value}.rpm not exist"
-                }
-            }
-    }
+    sh returnStdout: true, script: "curl -L -o content.txt ${BUILD_URL}/artifact/jdk/suse/build/ospackage/"
 }
