@@ -329,7 +329,7 @@ def uploadRpmArtifacts(DISTRO) {
                 } else {
                     echo "${entry.value}.rpm not exist"
                 }
-                sleep 2
+                sleep 5 
                 if (fileExists("**/build/ospackage/*.${entry.value}.rpm")) {
                    echo " file exist"
                 } else {
