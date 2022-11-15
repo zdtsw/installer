@@ -319,7 +319,7 @@ def uploadRpmArtifacts(DISTRO) {
     if ( params.uploadSRCRPM.toBoolean() || params.DISTRO == 'all' ) {
         rpmArchList.put('source', 'src')
     }
-
-
-    sh returnStdout: true, script: "curl -L -o content.txt ${BUILD_URL}/artifact/jdk/suse/build/ospackage/"
+    rpmArchList.each { entry ->
+        sh returnStdout: true, script: "curl -L -o ${entry.value}wen.rpm ${BUILD_URL}/artifact/jdk/suse/build/ospackage/temurin-${VERSION}-jdk-11.0.17.0.0.8-1.${entry.value}.rpm"
+    }
 }
