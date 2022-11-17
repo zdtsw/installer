@@ -323,22 +323,24 @@ def uploadRpmArtifacts(DISTRO) {
 
     packageDirs.each { packageDir ->
         rpmArchList.each { entry ->
-            def artifactRPM = findFiles(glob: '**/build/ospackage/*.${entry.value}.rpm')
-            if(artifactRPM.length == 0) {
-                sleep 5
-            } else {
-                rtUpload(
-                    serverId: 'adoptium.jfrog.io',
-                    failNoOp: true,
-                    spec: """{
-                        "files": [
-                            {
-                            "pattern": "**/build/ospackage/*.${entry.value}.rpm",
-                            "target": "${packageDir}/${entry.key}/Packages/"
-                            }
-                        ]
-                    }"""
-                )
+            for (int i = 0; i < 5; i++) { // loop 5 times at most
+                if(findFiles(glob: '**/build/ospackage/*.${entry.value}.rpm').length == 0) {
+                    sleep 2  // sleep 2 seconds
+                } else {
+                    rtUpload(
+                        serverId: 'adoptium.jfrog.io',
+                        failNoOp: true,
+                        spec: """{
+                            "files": [
+                                {
+                                "pattern": "**/build/ospackage/*.${entry.value}.rpm",
+                                "target": "${packageDir}/${entry.key}/Packages/"
+                                }
+                            ]
+                        }"""
+                    )
+                    break
+                }
             }
         }
     }
