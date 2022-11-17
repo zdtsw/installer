@@ -214,6 +214,9 @@ def buildAndTest(DISTRO, buildArch) {
     } catch (Exception ex) {
         echo 'Exception in buildAndTest: ' + ex
         currentBuild.result = 'FAILURE'  // set the whole pipeline 'red' if build or test fail. Do not use "error" that will not call "finally"
+    } finally {
+        // should not allow empty archive, otherwsie nothing created in the previous step: package and test result( not needed )
+        archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', onlyIfSuccessful:false, allowEmptyArchive: false
     }
 }
 
@@ -318,10 +321,13 @@ def uploadRpmArtifacts(DISTRO) {
         rpmArchList.put('source', 'src')
     }
 
-    packageDirs.each {
-        packageDir ->
-            rpmArchList.each {
-                entry -> rtUpload(
+    packageDirs.each { packageDir ->
+        rpmArchList.each { entry ->
+            def artifactRPM = findFiles(glob: '**/build/ospackage/*.${entry.value}.rpm')
+            if(artifactRPM.length == 0) {
+                sleep 5
+            } else {
+                rtUpload(
                     serverId: 'adoptium.jfrog.io',
                     failNoOp: true,
                     spec: """{
@@ -334,5 +340,6 @@ def uploadRpmArtifacts(DISTRO) {
                     }"""
                 )
             }
+        }
     }
 }
