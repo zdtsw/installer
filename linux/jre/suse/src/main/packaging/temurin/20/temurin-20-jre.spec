@@ -1,14 +1,14 @@
-%global upstream_version 11.0.18+10
+%global upstream_version 20.0.0+1
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
-#  $ rpmdev-vercmp 11.0.13.0.1___7 11.0.13.0.0+8
-#  11.0.13.0.0___8 == 11.0.13.0.0+8
-%global spec_version 11.0.18.0.0.10
+#  $ rpmdev-vercmp 20.0.0.0.0___20.0.0.0.0+1
+#  20.0.0.0.0___1 == 20.0.0.0.0+1
+%global spec_version 20.0.0.0.0.1
 %global spec_release 2
-%global priority 1112
+%global priority 1912
 
-%global source_url_base https://github.com/adoptium/temurin11-binaries/releases/download
+%global source_url_base https://github.com/adoptium/temurin20-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
 %global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
 %global java_provides openjre
@@ -61,17 +61,16 @@
 %global src_num 8
 %global sha_src_num 9
 %endif
-
 # Allow for noarch SRPM build
 %ifarch noarch
 %global src_num 0
 %global sha_src_num 1
 %endif
 
-Name:        temurin-11-jre
+Name:        temurin-20-jre
 Version:     %{spec_version}
 Release:     %{spec_release}
-Summary:     Eclipse Temurin 11 JRE
+Summary:     Eclipse Temurin 20 JRE
 
 Group:       java
 License:     GPLv2 with exceptions
@@ -100,29 +99,29 @@ Requires: libz1%{?_isa}
 Requires: fontconfig%{?_isa}
 
 Provides: jre
-Provides: jre-11
-Provides: jre-11-headless
-Provides: jre-11-%{java_provides}
-Provides: jre-11-%{java_provides}-headless
+Provides: jre-20
+Provides: jre-20-headless
+Provides: jre-20-%{java_provides}
+Provides: jre-20-%{java_provides}-headless
 Provides: jre-headless
 Provides: jre-%{java_provides}
 Provides: jre-%{java_provides}-headless
 
 # First architecture (x86_64)
-Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Second architecture (ppc64le)
-Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Third architecture (s390x)
-Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Fourth architecture (aarch64)
-Source6: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source6: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Fifth architecture (arm32)
-Source8: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source9: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source8: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source9: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
@@ -159,23 +158,11 @@ popd
 %post
 if [ $1 -ge 1 ] ; then
     update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
-                        --slave %{_bindir}/jaotc jfr %{prefix}/bin/jaotc \
                         --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
-                        --slave %{_bindir}/jjs jjs %{prefix}/bin/jjs \
                         --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
+                        --slave %{_bindir}/jwebserver jwebserver %{prefix}/bin/jwebserver \
                         --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
-                        --slave %{_bindir}/pack200 pack200 %{prefix}/bin/pack200 \
-                        --slave %{_bindir}/rmid rmid %{prefix}/bin/rmid \
-                        --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry \
-                        --slave %{_bindir}/unpack200 unpack200 %{prefix}/bin/unpack200 \
-                        \
-                        --slave  %{_mandir}/man1/java.1 java.1 %{prefix}/man/man1/java.1 \
-                        --slave  %{_mandir}/man1/jjs.1 jjs.1 %{prefix}/man/man1/jjs.1 \
-                        --slave  %{_mandir}/man1/keytool.1 keytool.1 %{prefix}/man/man1/keytool.1 \
-                        --slave  %{_mandir}/man1/pack200.1 pack200.1 %{prefix}/man/man1/pack200.1 \
-                        --slave  %{_mandir}/man1/rmid.1 rmid.1 %{prefix}/man/man1/rmid.1 \
-                        --slave  %{_mandir}/man1/rmiregistry.1 rmiregistry.1 %{prefix}/man/man1/rmiregistry.1 \
-                        --slave  %{_mandir}/man1/unpack200.1 unpack200.1 %{prefix}/man/man1/unpack200.1
+                        --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry
 fi
 
 %preun
@@ -188,7 +175,5 @@ fi
 %{prefix}
 
 %changelog
-* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9-2.adopt0
-- Eclipse Temurin JRE 11.0.18+10 release 2.
-* Mon Jan 30 2023 11:35:00 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.18.0.0.10.adopt0
-- Eclipse Temurin JRE 11.0.18+10 release.
+* Wed Mar 23 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 20.0.0.0.0.1-1.adopt0
+- Eclipse Temurin JRE 20.0.2+1 release 1.

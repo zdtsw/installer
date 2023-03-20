@@ -1,14 +1,14 @@
-%global upstream_version 19.0.2+7
+%global upstream_version 20.0.0+1
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
-#  $ rpmdev-vercmp 19.0.0.0.0___19.0.0.0.0+36
-#  19.0.0.0.0___36 == 19.0.0.0.0+36
-%global spec_version 19.0.2.0.0.7
-%global spec_release 2
+#  $ rpmdev-vercmp 20.0.0.0.0___19.0.0.0.0+1
+#  20.0.0.0.0___1 == 20.0.0.0.0+1
+%global spec_version 20.0.0.0.0.1
+%global spec_release 1
 %global priority 1912
 
-%global source_url_base https://github.com/adoptium/temurin19-binaries/releases/download
+%global source_url_base https://github.com/adoptium/temurin20-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
 %global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
 %global java_provides openjre
@@ -67,10 +67,10 @@
 %global sha_src_num 1
 %endif
 
-Name:        temurin-19-jre
+Name:        temurin-20-jre
 Version:     %{spec_version}
 Release:     %{spec_release}
-Summary:     Eclipse Temurin 19 JRE
+Summary:     Eclipse Temurin 20 JRE
 
 Group:       java
 License:     GPLv2 with exceptions
@@ -79,7 +79,7 @@ URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
-Prefix: %{_libdir}/jvm/%{name}
+Prefix: /usr/lib/jvm/%{name}
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -87,41 +87,47 @@ BuildRequires:  wget
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
-Requires: dejavu-fonts
-Requires: libX11-6%{?_isa}
-Requires: libXext6%{?_isa}
-Requires: libXi6%{?_isa}
-Requires: libXrender1%{?_isa}
-Requires: libXtst6%{?_isa}
-Requires: libasound2%{?_isa}
+Requires: dejavu-sans-fonts
+Requires: libX11%{?_isa}
+Requires: libXext%{?_isa}
+Requires: libXi%{?_isa}
+Requires: libXrender%{?_isa}
+Requires: libXtst%{?_isa}
+Requires: alsa-lib%{?_isa}
 Requires: glibc%{?_isa}
-Requires: libz1%{?_isa}
+Requires: zlib%{?_isa}
 Requires: fontconfig%{?_isa}
 
 Provides: jre
-Provides: jre-19
-Provides: jre-19-headless
-Provides: jre-19-%{java_provides}
-Provides: jre-19-%{java_provides}-headless
+Provides: jre-20
+Provides: jre-20-headless
+Provides: jre-20-%{java_provides}
+Provides: jre-20-%{java_provides}-headless
 Provides: jre-headless
 Provides: jre-%{java_provides}
 Provides: jre-%{java_provides}-headless
 
 # First architecture (x86_64)
-Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK19U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK19U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Second architecture (ppc64le)
-Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK19U-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK19U-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Third architecture (s390x)
-Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK19U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK19U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Fourth architecture (aarch64)
-Source6: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK19U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK19U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source6: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Fifth architecture (arm32)
-Source8: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK19U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source9: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK19U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source8: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source9: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+
+# Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
+# is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
+# lists the available options.
+%define _source_payload w7.xzdio
+%define _binary_payload w7.xzdio
 
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
@@ -149,11 +155,14 @@ tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_n
 # Use cacerts included in OS
 rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
 pushd "%{buildroot}%{prefix}/lib/security"
-ln -s /var/lib/ca-certificates/java-cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
+ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
 popd
 
-%pretrans
-# noop
+# Ensure systemd-tmpfiles-clean does not remove pid files
+# https://bugzilla.redhat.com/show_bug.cgi?id=1704608
+%{__mkdir} -p %{buildroot}/usr/lib/tmpfiles.d
+echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
+echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 
 %post
 if [ $1 -ge 1 ] ; then
@@ -173,9 +182,8 @@ fi
 %files
 %defattr(-,root,root)
 %{prefix}
+/usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Thu Feb 22 2023  Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 19.0.2.0.0.7-2.adopt0
-- Eclipse Temurin JRE 19.0.2+7 release 2.
-* Mon Jan 30 2023 11:35:00 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 19.0.2.0.0.7.adopt0
-- Eclipse Temurin JRE 19.0.2+7 release.
+* Wed Mar 23 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 20.0.0.0.0.1-1.adopt0
+- Eclipse Temurin JRE 20.0.2+1 release 1.
